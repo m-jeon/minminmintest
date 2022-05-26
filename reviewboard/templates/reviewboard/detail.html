@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+{% if user == review.user or user.is_superuser %}
+<div>
+<form action="{% url 'reviewboard:delete' review.pk %}" method="POST">
+</form>
+</div>
+{% endif %}
+
+<section class="main-container" >
+  {% comment %} 백드롭이미지??  {% endcomment %}
+  <div class="backdrop" style="padding-top: 8px + 1vh;">
+    <div class="mx-5 row" style="margin: 7vmin 0;">
+      <div class="col-12 col-lg-4 align-self-center" style="height: 100%;">
+        <img src="https://image.tmdb.org/t/p/original{{ review.movie.poster_path }}" alt="{{ review.movie.title }}_poster">
+ 
+      </div>
+      <div class="col-12 col-lg-8 my-auto  ">
+        <p class="" style="color:#686868;">{{review.movie.release_date}} 개봉</p>
+        <h2 class="pb-2">{{ review.movie.title }}</h2>
+        <p class="cnt-{{ review.movie.pk}}">장르: {{ genre }} <i style="" class="ms-5 bi bi-star"></i>{{review.movie.vote_average}}</p> 
+        
+        <form action="{% url 'reviewboard:like' review.pk %}" method='POST'>
+          {% csrf_token %}
+          {% if user in review.like_users.all %}
+            <button class="btn btn-link">
+              <i class="bi bi-heart-fill"></i>  
+            </button>
+          {% else %}
+            <button class="btn btn-link">
+              <i class="bi bi-heart"></i>
+            </button>
+          {% endif %}
+          <span class="cnt-{{ review.pk }}">{{ review.like_users.all|length }} 명이 이 리뷰를 좋아합니다.</span>
+        </form>
+
+        <hr>         
+  
+        <p class="fs-3 ">리뷰 제목: {{ review.title }}</p>
+        <p class=" fs-5  text-break">리뷰 내용: {{ review.content }}</p>
+        <div class="d-flex px-1"> 
+          <div class=" me-auto">
+            <small >{{ review.user }} | {{ review.updated_at|date:'Y-m-d H:i' }} </small>
+            {% comment %} <i class="bi bi-hand-thumbs-up"></i>
+            <i class="bi bi-hand-thumbs-down"></i> {% endcomment %}
+            <i class="bi bi-exclamation-triangle"></i>
+            {% comment %} <small>작성 시각:{{ rate.created_at }}</small> {% endcomment %}
+          </div>
+        
+          {% if user == review.user %}
+          <div>
+            <form action="{% url 'reviewboard:delete' review.pk %}" method="POST">
+              <button style="color: #F3F3F3; --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; 
+              --bs-btn-font-size: .9rem;" class=" btn btn-outline-secondary "><a href="{% url 'reviewboard:update' review.pk %}" class=" text-decoration-none" style="color: #F3F3F3;">수정</a></button>
+              {% csrf_token %}
+              <button style="color: #F3F3F3; --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; 
+              --bs-btn-font-size: .9rem;" class=" btn btn-outline-secondary ">삭제</button>
+            </form>
+          </div>
+          {% endif %}
+          <a href="{% url 'reviewboard:index' %}" role="button" style="color: #F3F3F3; --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; 
+          --bs-btn-font-size: .9rem;" class="ms-1 btn btn-outline-secondary ">리뷰 목록</a> 
+        </div>
+        <hr> 
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{% endblock content %}
+
+ 
+ 
